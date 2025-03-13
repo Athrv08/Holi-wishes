@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Holi</title>
+    <title>Happy Holi - Fluid Simulation</title>
     <style>
         html, body {
             overflow: hidden;
-            padding: 50px;
+            margin: 0;
+            padding: 0;
             color: #fff;
+            text-align: center;
         }
 
         body {
             background: url(http://www.nhembram.com/images/happy_holi.jpg) no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
             background-size: cover;
         }
 
@@ -25,27 +24,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0.5;
-            opacity: 1;
+            z-index: 0;
         }
 
         div {
             position: relative;
             z-index: 1;
             font-size: 70px;
-            padding: 0;
-            display: table;
-            margin: auto;
-            letter-spacing: 2px;
             font-family: 'Great Vibes', cursive;
+            margin-top: 20px;
         }
 
         p {
-            display: table;
-            margin: 20px auto;
             font-family: Arial, Helvetica, sans-serif;
             text-align: center;
-            font-size: 8px;
+            font-size: 14px;
             letter-spacing: 2px;
             position: absolute;
             bottom: 10px;
@@ -56,62 +49,44 @@
     </style>
 </head>
 <body>
-    <canvas></canvas>
+    <canvas id="fluidCanvas"></canvas>
     <div>Happy Holi</div>
     <p>( CLICK ON BLANK SPACES TO CHANGE FLUID COLOR )</p>
 
     <script>
-        'use strict';
+        const canvas = document.getElementById('fluidCanvas');
+        const ctx = canvas.getContext('2d');
 
-        function _classCallCheck(instance, Constructor) { 
-            if (!(instance instanceof Constructor)) { 
-                throw new TypeError("Cannot call a class as a function"); 
-            } 
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let colors = ["#ff0000", "#ff9900", "#ffff00", "#33cc33", "#3399ff", "#9900cc"];
+        
+        function createSplash(x, y) {
+            let color = colors[Math.floor(Math.random() * colors.length)];
+            let size = Math.random() * 50 + 20;
+
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+
+            setTimeout(() => {
+                ctx.clearRect(x - size, y - size, size * 2, size * 2);
+            }, 1000);
         }
 
-        var canvas = document.getElementsByTagName('canvas')[0];
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
+        canvas.addEventListener("click", (event) => {
+            let x = event.clientX;
+            let y = event.clientY;
+            createSplash(x, y);
+        });
 
-        var params = { alpha: false, depth: false, stencil: false, antialias: false };
-        var gl = canvas.getContext('webgl2', params);
-        var isWebGL2 = !!gl;
-        if (!isWebGL2) {
-            gl = canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params);
-        }
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-        var halfFloat = gl.getExtension('OES_texture_half_float');
-        var support_linear_float = gl.getExtension('OES_texture_half_float_linear');
-        if (isWebGL2) {
-            gl.getExtension('EXT_color_buffer_float');
-            support_linear_float = gl.getExtension('OES_texture_float_linear');
-        }
-
-        var TEXTURE_DOWNSAMPLE = 1;
-        var DENSITY_DISSIPATION = 0.98;
-        var VELOCITY_DISSIPATION = 0.99;
-        var SPLAT_RADIUS = 0.005;
-        var CURL = 30;
-        var PRESSURE_ITERATIONS = 25;
-
-        var GLProgram = function () {
-            function GLProgram(vertexShader, fragmentShader) {
-                _classCallCheck(this, GLProgram);
-
-                this.uniforms = {};
-                this.program = gl.createProgram();
-
-                gl.attachShader(this.program, vertexShader);
-                gl.attachShader(this.program, fragmentShader);
-                gl.linkProgram(this.program);
-
-                if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) 
-                    throw gl.getProgramInfoLog(this.program);
-
-                var uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
-            }
-        };
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
