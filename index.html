@@ -3,137 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Holi 2025!</title>
+    <title>Happy Holi</title>
     <style>
-        /* Full-screen gradient background */
-        body {
-            margin: 0;
+        html, body {
             overflow: hidden;
-            background: linear-gradient(90deg, #ff5733, #ffbd33, #33ff57, #33aaff, #ff33a8);
-            background-size: 400% 400%;
-            animation: gradientBG 10s infinite alternate;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-            color: white;
+            padding: 50px;
+            color: #fff;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        body {
+            background: url(http://www.nhembram.com/images/happy_holi.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
         }
 
-        /* Glowing Holi text */
-        .holi-text {
-            font-size: 70px;
-            font-weight: bold;
-            text-shadow: 5px 5px 15px rgba(255, 255, 255, 0.8);
-            animation: colorGlow 2s infinite alternate;
-        }
-
-        @keyframes colorGlow {
-            0% { color: #ff0; }
-            50% { color: #f0f; }
-            100% { color: #0ff; }
-        }
-
-        /* Message box */
-        .message {
-            font-size: 24px;
-            margin: 20px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            display: inline-block;
-        }
-
-        /* Fireworks Effect */
         canvas {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            z-index: 0.5;
+            opacity: 1;
+        }
+
+        div {
+            position: relative;
+            z-index: 1;
+            font-size: 70px;
+            padding: 0;
+            display: table;
+            margin: auto;
+            letter-spacing: 2px;
+            font-family: 'Great Vibes', cursive;
+        }
+
+        p {
+            display: table;
+            margin: 20px auto;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            font-size: 8px;
+            letter-spacing: 2px;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            z-index: 1;
+            transform: translateX(-50%);
         }
     </style>
 </head>
 <body>
-    <!-- Holi Wishes Text -->
-    <h1 class="holi-text">Happy Holi 2025!</h1>
-    
-    <!-- Message -->
-    <div class="message">
-        Wishing you a Holi full of **colors, happiness, and joy!**  
-        May your life be as vibrant as this festival.  
-        **होली की हार्दिक शुभकामनाएँ!**  
-        **Celebrate with love & positivity!**
-    </div>
-
-    <!-- Fireworks Canvas -->
-    <canvas id="fireworks"></canvas>
-
-    <!-- Holi Music -->
-    <audio id="holi-music" autoplay loop>
-        <source src="https://www.soundjay.com/free-music/holi-song.mp3" type="audio/mp3">
-    </audio>
+    <canvas></canvas>
+    <div>Happy Holi</div>
+    <p>( CLICK ON BLANK SPACES TO CHANGE FLUID COLOR )</p>
 
     <script>
-        /* Fireworks Effect */
-        const canvas = document.getElementById("fireworks");
-        const ctx = canvas.getContext("2d");
+        'use strict';
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particles = [];
-
-        function createParticle(x, y) {
-            let colors = ["#ff0000", "#ff9900", "#ffff00", "#33cc33", "#3399ff", "#9900cc"];
-            let color = colors[Math.floor(Math.random() * colors.length)];
-
-            particles.push({
-                x: x,
-                y: y,
-                size: Math.random() * 8 + 2,
-                speedX: Math.random() * 4 - 2,
-                speedY: Math.random() * 4 - 2,
-                color: color
-            });
+        function _classCallCheck(instance, Constructor) { 
+            if (!(instance instanceof Constructor)) { 
+                throw new TypeError("Cannot call a class as a function"); 
+            } 
         }
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
 
-            particles.forEach((p, i) => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
+        var params = { alpha: false, depth: false, stencil: false, antialias: false };
+        var gl = canvas.getContext('webgl2', params);
+        var isWebGL2 = !!gl;
+        if (!isWebGL2) {
+            gl = canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params);
+        }
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-                p.x += p.speedX;
-                p.y += p.speedY;
-                p.size -= 0.1;
-
-                if (p.size <= 0) particles.splice(i, 1);
-            });
+        var halfFloat = gl.getExtension('OES_texture_half_float');
+        var support_linear_float = gl.getExtension('OES_texture_half_float_linear');
+        if (isWebGL2) {
+            gl.getExtension('EXT_color_buffer_float');
+            support_linear_float = gl.getExtension('OES_texture_float_linear');
         }
 
-        canvas.addEventListener("click", (e) => {
-            for (let i = 0; i < 20; i++) createParticle(e.clientX, e.clientY);
-        });
+        var TEXTURE_DOWNSAMPLE = 1;
+        var DENSITY_DISSIPATION = 0.98;
+        var VELOCITY_DISSIPATION = 0.99;
+        var SPLAT_RADIUS = 0.005;
+        var CURL = 30;
+        var PRESSURE_ITERATIONS = 25;
 
-        function animate() {
-            drawParticles();
-            requestAnimationFrame(animate);
-        }
+        var GLProgram = function () {
+            function GLProgram(vertexShader, fragmentShader) {
+                _classCallCheck(this, GLProgram);
 
-        animate();
+                this.uniforms = {};
+                this.program = gl.createProgram();
 
-        /* Play music on page load */
-        document.addEventListener("click", () => {
-            document.getElementById("holi-music").play();
-        });
+                gl.attachShader(this.program, vertexShader);
+                gl.attachShader(this.program, fragmentShader);
+                gl.linkProgram(this.program);
+
+                if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) 
+                    throw gl.getProgramInfoLog(this.program);
+
+                var uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
+            }
+        };
     </script>
 </body>
 </html>
