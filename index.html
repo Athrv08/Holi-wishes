@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Holi</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #ff5733, #ffbd33, #33ff57, #33aaff, #a833ff);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: 60px;
+            font-weight: bold;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+            animation: holiText 1.5s infinite alternate;
+        }
+
+        @keyframes holiText {
+            from { color: yellow; }
+            to { color: pink; }
+        }
+
+        .message {
+            font-size: 24px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Holi!</h1>
+    <div class="message">
+        Wishing you and your family a joyful, vibrant, and colorful Holi!  
+        May this festival bring happiness, love, and prosperity to your life.
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let colors = ['red', 'yellow', 'green', 'blue', 'pink', 'purple', 'orange'];
+
+        function drawSplash(x, y) {
+            let color = colors[Math.floor(Math.random() * colors.length)];
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, Math.random() * 50 + 10, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        document.addEventListener('click', (event) => {
+            drawSplash(event.clientX, event.clientY);
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
