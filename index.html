@@ -3,51 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Holi</title>
+    <title>Happy Holi 2025!</title>
     <style>
+        /* Full-screen gradient background */
         body {
-            background: linear-gradient(45deg, #ff5733, #ffbd33, #33ff57, #33aaff, #a833ff);
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            color: white;
-            overflow: hidden;
             margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(90deg, #ff5733, #ffbd33, #33ff57, #33aaff, #ff33a8);
+            background-size: 400% 400%;
+            animation: gradientBG 10s infinite alternate;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            color: white;
         }
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
-        h1 {
-            font-size: 60px;
+        /* Glowing Holi text */
+        .holi-text {
+            font-size: 70px;
             font-weight: bold;
-            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-            animation: holiText 1.5s infinite alternate;
+            text-shadow: 5px 5px 15px rgba(255, 255, 255, 0.8);
+            animation: colorGlow 2s infinite alternate;
         }
 
-        @keyframes holiText {
-            from { color: yellow; }
-            to { color: pink; }
+        @keyframes colorGlow {
+            0% { color: #ff0; }
+            50% { color: #f0f; }
+            100% { color: #0ff; }
         }
 
+        /* Message box */
         .message {
             font-size: 24px;
-            margin-top: 20px;
+            margin: 20px;
             padding: 20px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            display: inline-block;
         }
 
+        /* Fireworks Effect */
         canvas {
             position: absolute;
             top: 0;
@@ -59,37 +59,80 @@
     </style>
 </head>
 <body>
-    <h1>Happy Holi!</h1>
+    <!-- Holi Wishes Text -->
+    <h1 class="holi-text">Happy Holi 2025!</h1>
+    
+    <!-- Message -->
     <div class="message">
-        Wishing you and your family a joyful, vibrant, and colorful Holi!  
-        May this festival bring happiness, love, and prosperity to your life.
+        Wishing you a Holi full of **colors, happiness, and joy!**  
+        May your life be as vibrant as this festival.  
+        **होली की हार्दिक शुभकामनाएँ!**  
+        **Celebrate with love & positivity!**
     </div>
 
-    <canvas id="canvas"></canvas>
+    <!-- Fireworks Canvas -->
+    <canvas id="fireworks"></canvas>
+
+    <!-- Holi Music -->
+    <audio id="holi-music" autoplay loop>
+        <source src="https://www.soundjay.com/free-music/holi-song.mp3" type="audio/mp3">
+    </audio>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+        /* Fireworks Effect */
+        const canvas = document.getElementById("fireworks");
+        const ctx = canvas.getContext("2d");
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let colors = ['red', 'yellow', 'green', 'blue', 'pink', 'purple', 'orange'];
+        let particles = [];
 
-        function drawSplash(x, y) {
+        function createParticle(x, y) {
+            let colors = ["#ff0000", "#ff9900", "#ffff00", "#33cc33", "#3399ff", "#9900cc"];
             let color = colors[Math.floor(Math.random() * colors.length)];
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(x, y, Math.random() * 50 + 10, 0, Math.PI * 2);
-            ctx.fill();
+
+            particles.push({
+                x: x,
+                y: y,
+                size: Math.random() * 8 + 2,
+                speedX: Math.random() * 4 - 2,
+                speedY: Math.random() * 4 - 2,
+                color: color
+            });
         }
 
-        document.addEventListener('click', (event) => {
-            drawSplash(event.clientX, event.clientY);
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+
+                p.x += p.speedX;
+                p.y += p.speedY;
+                p.size -= 0.1;
+
+                if (p.size <= 0) particles.splice(i, 1);
+            });
+        }
+
+        canvas.addEventListener("click", (e) => {
+            for (let i = 0; i < 20; i++) createParticle(e.clientX, e.clientY);
         });
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function animate() {
+            drawParticles();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        /* Play music on page load */
+        document.addEventListener("click", () => {
+            document.getElementById("holi-music").play();
         });
     </script>
 </body>
