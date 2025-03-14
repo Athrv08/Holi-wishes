@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Holi - Fluid Simulation</title>
+    <title>Happy Holi - Interactive Colors</title>
     <style>
+        /* Global Styling */
         html, body {
-            overflow: hidden;
             margin: 0;
             padding: 0;
-            color: #fff;
+            overflow: hidden;
+            color: white;
+            font-family: Arial, sans-serif;
             text-align: center;
         }
 
+        /* Background Image */
         body {
-            background: url(http://www.nhembram.com/images/happy_holi.jpg) no-repeat center center fixed;
+            background: url("https://www.nhembram.com/images/happy_holi.jpg") no-repeat center center fixed;
             background-size: cover;
         }
 
+        /* Canvas for Color Effect */
         canvas {
             position: fixed;
             top: 0;
@@ -27,7 +31,8 @@
             z-index: 0;
         }
 
-        div {
+        /* Holi Text */
+        .holi-text {
             position: relative;
             z-index: 1;
             font-size: 70px;
@@ -35,33 +40,38 @@
             margin-top: 20px;
         }
 
-        p {
-            font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
+        /* Instruction Text */
+        .instructions {
             font-size: 14px;
-            letter-spacing: 2px;
             position: absolute;
             bottom: 10px;
             left: 50%;
-            z-index: 1;
             transform: translateX(-50%);
+            z-index: 1;
         }
     </style>
 </head>
 <body>
     <canvas id="fluidCanvas"></canvas>
-    <div>Happy Holi</div>
-    <p>( CLICK ON BLANK SPACES TO CHANGE FLUID COLOR )</p>
+    <div class="holi-text">Happy Holi</div>
+    <p class="instructions">( CLICK ON BLANK SPACES TO CHANGE FLUID COLOR )</p>
 
     <script>
         const canvas = document.getElementById('fluidCanvas');
         const ctx = canvas.getContext('2d');
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Set canvas to full screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
 
+        // List of Holi colors
         let colors = ["#ff0000", "#ff9900", "#ffff00", "#33cc33", "#3399ff", "#9900cc"];
-        
+
+        // Function to create a color splash
         function createSplash(x, y) {
             let color = colors[Math.floor(Math.random() * colors.length)];
             let size = Math.random() * 50 + 20;
@@ -72,20 +82,17 @@
             ctx.fill();
             ctx.closePath();
 
+            // Remove splash after 1 second
             setTimeout(() => {
                 ctx.clearRect(x - size, y - size, size * 2, size * 2);
             }, 1000);
         }
 
+        // Event listener for clicks to create color splashes
         canvas.addEventListener("click", (event) => {
             let x = event.clientX;
             let y = event.clientY;
             createSplash(x, y);
-        });
-
-        window.addEventListener("resize", () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
     </script>
 </body>
